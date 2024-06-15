@@ -1,44 +1,59 @@
-
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { useState } from 'react';
 
 function Board() {
-  const squares = Array(9).fill(null);
-  function selectSquare(square) {
+  const [squares,setSquare] = useState(Array(9).fill(null));
 
+  function selectSquare(index) {
+    if(squares[index]) return;
+    const nextSquare = squares.slice();
+    nextSquare[index] = calculateNextValue(squares);
+    setSquare(nextSquare);
   }
 
   function restart() {
+    const squareRestart = Array(9).fill(null);
+    setSquare(squareRestart);
   }
 
   function renderSquare(i) {
     return (
-      <button className="square" onClick={() => selectSquare(i)}>
+      <button className="btn-1 size-32 text-white text-xxl border-2 border-orange-500 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 rounded-lg px-5 py-2.5 text-center me-2 mb-2" onClick={()=>{selectSquare(i)}} size="lg">
         {squares[i]}
       </button>
     );
   }
 
   return (
-    <div>
-      <div >STATUS</div>
-      <div >
-        {renderSquare(0)}
-        {renderSquare(1)}
-        {renderSquare(2)}
+    <div className='flex flex-col items-center'>
+      <p className="status w-50 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 my-8">
+        {calculateStatus(calculateWinner(squares),squares,calculateNextValue(squares))}
+      </p>
+    <div className='Board'>
+    <div className=''>
+       {renderSquare(0)}
+       {renderSquare(1)}
+       {renderSquare(2)}
       </div>
-      <div >
-        {renderSquare(3)}
-        {renderSquare(4)}
-        {renderSquare(5)}
+
+      <div className=''>
+       {renderSquare(3)}
+       {renderSquare(4)}
+       {renderSquare(5)}
       </div>
-      <div >
-        {renderSquare(6)}
-        {renderSquare(7)}
-        {renderSquare(8)}
+
+      <div className=''>
+       {renderSquare(6)}
+       {renderSquare(7)}
+       {renderSquare(8)}
       </div>
-      <button onClick={restart}>
-        restart
+    </div>
+
+      <button onClick={restart} className='reset-btn text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 me-2 my-5'>
+        Restart
       </button>
+
     </div>
   );
 }
@@ -58,12 +73,13 @@ function calculateStatus(winner, squares, nextValue) {
   return winner
     ? `Winner: ${winner}`
     : squares.every(Boolean)
-      ? `Scratch: Cat's game`
-      : `Next player: ${nextValue}`;
+      ? `Draw, Let's Play Again`
+      : `Next Player: ${nextValue}`;
 }
 
 // eslint-disable-next-line no-unused-vars
 function calculateNextValue(squares) {
+  if(calculateWinner(squares)) return 
   return squares.filter(Boolean).length % 2 === 0 ? 'X' : 'O';
 }
 
